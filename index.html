@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title>Bowling Score Master</title>
+        <script type="text/javascript">
+            
+            function parseInputStr(inputString) {
+                return inputString.replace(/\s/g, '').split('');
+                }
+
+                function rollToScore(roll, previousRoll) {
+					if (!isNaN(roll)) {
+                        return parseInt(roll);
+                    }
+                    if (roll === 'X') {
+                        return 10;
+                    }
+                    if (roll === '/') {
+                        // Previous roll could be a gutter ball.
+                        return (isNaN(previousRoll) ? 10 : 10 - previousRoll);
+                    }
+                    return 0;
+                }
+
+                function calculateScore() {
+                    var inputString = document.getElementById("ProgInput").value;
+                    var rolls = parseInputStr(inputString),
+                        score = 0;
+                    for (var i = 0, l = rolls.length; i < l; i++)
+                    {
+						score += rollToScore(rolls[i], rolls[i - 1]);
+					    // Strike. Look ahead and add next two rolls.
+                        if (rolls[i] === 'X') {
+                            score += rollToScore(rolls[i + 1]);
+                            score += rollToScore(rolls[i + 2], rolls[i + 1]);
+                            // If this is the first ball of the 10th frame, we're done.
+                            if (i == l - 3) {
+                                break;
+                            }
+                        }
+                            // Spare. Look ahead and add next roll.
+                        else if (rolls[i] === '/') {
+                            score += rollToScore(rolls[i + 1], rolls[i]);
+                            // If this is the second ball of the 10th frame, we're done.
+                            if (i == l - 2) {
+                                break;
+                            }
+                        }
+                    }
+
+                    document.getElementById("score").innerHTML = "Score: "+score;
+                }
+        </script>
+        <style>
+            .container
+            {
+                    width: 50%;
+                    border-radius: 5px;
+                    background-color: #3b5998;
+                    border: 1px solid #29487d;
+                    color: #FFF;
+                    text-align: center;
+                    height: 300px;
+                    padding-top: 100px;
+                    margin: 0 auto;
+                    margin-top: 50px;
+            }
+            #score
+            {
+                padding: 30px;
+                font-weight: bold;
+                font-size: 32px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h3>Challenge – Bowling Score</h3>
+            <input type="text" id="ProgInput" />
+            <button onclick="calculateScore()">Calculate Score</button>
+            <div id="score"></div>
+        </div>
+    </body>
+</html>
